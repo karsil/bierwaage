@@ -1,0 +1,9 @@
+apiVersion: 1
+
+datasources:
+  - name: Bierwaage API
+    type: yesoreyeram-infinity-datasource
+    access: proxy
+    isDefault: true
+    jsonData:
+      base_url: http://ingest:8000

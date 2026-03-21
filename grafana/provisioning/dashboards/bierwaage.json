@@ -1,0 +1,267 @@
+{
+  "title": "Bierwaage",
+  "uid": "bierwaage-main",
+  "schemaVersion": 39,
+  "version": 2,
+  "refresh": "10s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Gewicht (kg)",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": null,
+      "targets": [
+        {
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "url": "http://ingest:8000/api/measurements?limit=2000",
+          "url_options": {
+            "method": "GET"
+          },
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "ts",
+              "text": "Time",
+              "type": "timestamp"
+            },
+            {
+              "selector": "gewicht_kg",
+              "text": "Gewicht (kg)",
+              "type": "number"
+            }
+          ],
+          "parser": "backend"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Temperatur & Luftfeuchtigkeit",
+      "type": "timeseries",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": null,
+      "targets": [
+        {
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "url": "http://ingest:8000/api/measurements?limit=2000",
+          "url_options": {
+            "method": "GET"
+          },
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "ts",
+              "text": "Time",
+              "type": "timestamp"
+            },
+            {
+              "selector": "temp_ds18b20",
+              "text": "Temp DS18B20 (\u00b0C)",
+              "type": "number"
+            },
+            {
+              "selector": "temp_bme280",
+              "text": "Temp BME280 (\u00b0C)",
+              "type": "number"
+            },
+            {
+              "selector": "humidity_pct",
+              "text": "Luftfeuchtigkeit (%)",
+              "type": "number"
+            }
+          ],
+          "parser": "backend"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Aktuelles Gewicht",
+      "type": "stat",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": null,
+      "targets": [
+        {
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "url": "http://ingest:8000/api/measurements?limit=1",
+          "url_options": {
+            "method": "GET"
+          },
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "gewicht_kg",
+              "text": "Gewicht (kg)",
+              "type": "number"
+            }
+          ],
+          "parser": "backend"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kg"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Aktuelle Temperatur (DS18B20)",
+      "type": "stat",
+      "gridPos": {
+        "x": 6,
+        "y": 8,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": null,
+      "targets": [
+        {
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "url": "http://ingest:8000/api/measurements?limit=1",
+          "url_options": {
+            "method": "GET"
+          },
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "temp_ds18b20",
+              "text": "Temperatur (\u00b0C)",
+              "type": "number"
+            }
+          ],
+          "parser": "backend"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Luftdruck",
+      "type": "bargauge",
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 4
+      },
+      "datasource": null,
+      "targets": [
+        {
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "url": "http://ingest:8000/api/measurements?limit=1",
+          "url_options": {
+            "method": "GET"
+          },
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "pressure_hpa",
+              "text": "Luftdruck (hPa)",
+              "type": "number"
+            }
+          ],
+          "parser": "backend"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "pressurehpa",
+          "min": 950,
+          "max": 1050
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "Letzte Messungen",
+      "type": "table",
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": null,
+      "targets": [
+        {
+          "refId": "A",
+          "type": "json",
+          "source": "url",
+          "url": "http://ingest:8000/api/measurements?limit=50",
+          "url_options": {
+            "method": "GET"
+          },
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "ts",
+              "text": "Zeit",
+              "type": "timestamp"
+            },
+            {
+              "selector": "gewicht_kg",
+              "text": "Gewicht (kg)",
+              "type": "number"
+            },
+            {
+              "selector": "temp_ds18b20",
+              "text": "Temp DS18B20",
+              "type": "number"
+            },
+            {
+              "selector": "temp_bme280",
+              "text": "Temp BME280",
+              "type": "number"
+            },
+            {
+              "selector": "pressure_hpa",
+              "text": "Druck (hPa)",
+              "type": "number"
+            },
+            {
+              "selector": "humidity_pct",
+              "text": "Feuchte (%)",
+              "type": "number"
+            }
+          ],
+          "parser": "backend"
+        }
+      ]
+    }
+  ]
+}

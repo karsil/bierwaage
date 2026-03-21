@@ -1,0 +1,38 @@
+services:
+  ingest:
+    build: ./ingest
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  telegraf:
+    image: telegraf:1.33
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    depends_on:
+      ingest:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_INSTALL_PLUGINS=yesoreyeram-infinity-datasource
+    # dns_opt forces sequential A/AAAA DNS lookups instead of parallel.
+    # Go's resolver (used by the Infinity plugin backend) triggers SERVFAIL from
+    # Docker's embedded DNS (127.0.0.11) when both record types are queried at once,
+    # making internal hostnames like "ingest" unresolvable despite being on the same network.
+    dns_opt:
+      - single-request
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - ingest
