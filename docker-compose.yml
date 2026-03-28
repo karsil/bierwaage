@@ -12,6 +12,9 @@ services:
       retries: 10
       start_period: 10s
 
+    environment:
+      DB_PATH: ${DB_PATH}
+
   telegraf:
     image: telegraf:1.33
     volumes:

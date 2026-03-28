@@ -4,7 +4,9 @@ from typing import Any, Optional
 import duckdb
 from fastapi import FastAPI, Request
 
-DB_PATH = "/data/bierwaage.duckdb"
+import os
+
+DB_PATH = os.environ["DB_PATH"]
 
 app = FastAPI()
 
