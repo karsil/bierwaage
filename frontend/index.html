@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Die Kirsche</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cherry:     #8b1a2e;
+      --cherry-mid: #b52040;
+      --cherry-bright: #e63a60;
+      --gold:       #c9a84c;
+      --bg:         #0d0a08;
+      --surface:    #161210;
+      --surface2:   #1f1916;
+      --border:     #2e2420;
+      --text:       #e8ddd4;
+      --muted:      #7a6a62;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .cherry-icon {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 0 12px rgba(180, 30, 60, 0.6));
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+
+    .tagline {
+      font-size: 0.8rem;
+      color: var(--gold);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-top: 0.6rem;
+    }
+
+    .divider {
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 1.5rem auto 0;
+    }
+
+    .keg-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--cherry-mid);
+      border-radius: 2px;
+      padding: 2rem 2.5rem;
+      text-align: center;
+      margin-bottom: 2.5rem;
+      width: 100%;
+      max-width: 340px;
+      position: relative;
+    }
+
+    .keg-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(139,26,46,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      border-radius: 2px;
+    }
+
+    .keg-label {
+      font-size: 0.7rem;
+      color: var(--gold);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .keg-weight {
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0.25rem;
+    }
+
+    .keg-weight .unit {
+      font-size: 1.75rem;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+    }
+
+    .keg-ts {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 1rem;
+    }
+
+    .table-wrap {
+      width: 100%;
+      max-width: 780px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    thead tr {
+      border-bottom: 1px solid var(--cherry);
+    }
+
+    th {
+      text-align: left;
+      padding: 0.6rem 1rem;
+      color: var(--gold);
+      font-weight: 500;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    td.weight-cell {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--cherry-bright);
+    }
+
+    tbody tr:hover td {
+      background: var(--surface2);
+    }
+
+    .status-bar {
+      margin-top: 2rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cherry-mid);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    .error { color: var(--cherry-bright); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <span class="cherry-icon">🍒</span>
+    <h1>Die Kirsche</h1>
+    <p class="tagline">Fassbelegung</p>
+    <div class="divider"></div>
+  </header>
+
+  <div class="keg-card">
+    <div class="keg-label">Aktuelles Gewicht</div>
+    <div class="keg-weight">
+      <span id="current-weight">—</span>
+      <span class="unit">kg</span>
+    </div>
+    <div class="keg-ts" id="current-ts"></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Zeit</th>
+          <th>Gewicht (kg)</th>
+          <th>Temp. DS18B20 (°C)</th>
+          <th>Temp. BME280 (°C)</th>
+          <th>Feuchte (%)</th>
+          <th>Druck (hPa)</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+
+  <div class="status-bar">
+    <span class="dot" id="status-dot"></span>
+    <span id="status"></span>
+  </div>
+
+  <script>
+    function fmt(v, digits) {
+      return v != null ? v.toFixed(digits) : '—';
+    }
+
+    async function load() {
+      try {
+        const res = await fetch('/api/measurements?limit=50');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const rows = await res.json();
+
+        if (rows.length > 0) {
+          const latest = rows[0];
+          document.getElementById('current-weight').textContent = fmt(latest.gewicht_kg, 2);
+          document.getElementById('current-ts').textContent =
+            new Date(latest.ts).toLocaleString('de-DE');
+        }
+
+        document.getElementById('table-body').innerHTML = rows.map(r => `
+          <tr>
+            <td>${new Date(r.ts).toLocaleString('de-DE')}</td>
+            <td class="weight-cell">${fmt(r.gewicht_kg, 3)}</td>
+            <td>${fmt(r.temp_ds18b20, 1)}</td>
+            <td>${fmt(r.temp_bme280, 1)}</td>
+            <td>${fmt(r.humidity_pct, 1)}</td>
+            <td>${fmt(r.pressure_hpa, 1)}</td>
+          </tr>
+        `).join('');
+
+        document.getElementById('status').textContent =
+          `Zuletzt aktualisiert: ${new Date().toLocaleTimeString('de-DE')} · ${rows.length} Messungen`;
+      } catch (e) {
+        document.getElementById('status').innerHTML =
+          `<span class="error">Fehler: ${e.message}</span>`;
+      }
+    }
+
+    load();
+    setInterval(load, 10000);
+  </script>
+</body>
+</html>
