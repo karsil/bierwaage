@@ -1,0 +1,8 @@
+.env
+
+# Terraform
+terraform/terraform.tfvars
+terraform/*.tfvars
+terraform/.terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
