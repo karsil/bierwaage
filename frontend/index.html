@@ -1,25 +1,37 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Die Kirsche</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     :root {
-      --cherry:     #8b1a2e;
+      --cherry: #8b1a2e;
       --cherry-mid: #b52040;
       --cherry-bright: #e63a60;
-      --gold:       #c9a84c;
-      --bg:         #0d0a08;
-      --surface:    #161210;
-      --surface2:   #1f1916;
-      --border:     #2e2420;
-      --text:       #e8ddd4;
-      --muted:      #7a6a62;
+      --gold: #c9a84c;
+      --bg: #0d0a08;
+      --surface: #161210;
+      --surface2: #1f1916;
+      --border: #2e2420;
+      --text: #e8ddd4;
+      --muted: #7a6a62;
     }
 
     body {
@@ -86,7 +98,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(139,26,46,0.08) 0%, transparent 70%);
+      background: radial-gradient(ellipse at 50% 0%, rgba(139, 26, 46, 0.08) 0%, transparent 70%);
       pointer-events: none;
       border-radius: 2px;
     }
@@ -122,6 +134,118 @@
       font-size: 0.75rem;
       color: var(--muted);
       margin-top: 1rem;
+    }
+
+    /* tare panel */
+    .tare-panel {
+      width: 100%;
+      max-width: 340px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      border-radius: 2px;
+      padding: 1.25rem 1.75rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .tare-panel summary {
+      font-size: 0.7rem;
+      color: var(--gold);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tare-panel summary::before {
+      content: '▸';
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+
+    .tare-panel[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    .tare-body {
+      margin-top: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .tare-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .tare-row label {
+      font-size: 0.78rem;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .tare-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      padding: 0.4rem 0.6rem;
+      min-width: 0;
+    }
+
+    .tare-input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    .tare-btn {
+      background: var(--cherry);
+      border: none;
+      border-radius: 2px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.45rem 0.9rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+
+    .tare-btn:hover {
+      background: var(--cherry-mid);
+    }
+
+    .tare-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .tare-toggle input[type=checkbox] {
+      accent-color: var(--cherry-mid);
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
+    .tare-active-hint {
+      font-size: 0.72rem;
+      color: var(--gold);
+      margin-top: 0.25rem;
     }
 
     .table-wrap {
@@ -186,13 +310,42 @@
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.3; }
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
     }
 
-    .error { color: var(--cherry-bright); }
+    .error {
+      color: var(--cherry-bright);
+    }
+
+    .chart-wrap {
+      width: 100%;
+      max-width: 780px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--cherry-mid);
+      border-radius: 2px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .chart-title {
+      font-size: 0.7rem;
+      color: var(--gold);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
+
 <body>
 
   <header>
@@ -203,7 +356,7 @@
   </header>
 
   <div class="keg-card">
-    <div class="keg-label">Aktuelles Gewicht</div>
+    <div class="keg-label" id="weight-label">Aktuelles Gewicht</div>
     <div class="keg-weight">
       <span id="current-weight">—</span>
       <span class="unit">kg</span>
@@ -211,12 +364,33 @@
     <div class="keg-ts" id="current-ts"></div>
   </div>
 
+  <details class="tare-panel">
+    <summary>Leergewicht eingeben</summary>
+    <div class="tare-body">
+      <div class="tare-row">
+        <label for="tare-input">Leergewicht (kg)</label>
+        <input id="tare-input" class="tare-input" type="number" step="0.001" placeholder="z.B. 9.750">
+        <button class="tare-btn" id="tare-apply">Setzen</button>
+      </div>
+      <label class="tare-toggle">
+        <input type="checkbox" id="tare-raw">
+        Rohwert anzeigen
+      </label>
+      <div class="tare-active-hint" id="tare-hint"></div>
+    </div>
+  </details>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Gewicht — letzte 24 Stunden</div>
+    <canvas id="weight-chart" height="120"></canvas>
+  </div>
+
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
           <th>Zeit</th>
-          <th>Gewicht (kg)</th>
+          <th id="th-weight">Gewicht (kg)</th>
           <th>Temp. DS18B20 (°C)</th>
           <th>Temp. BME280 (°C)</th>
           <th>Feuchte (%)</th>
@@ -233,8 +407,114 @@
   </div>
 
   <script>
+    // ── Tare state (persisted in localStorage) ────────────────────────────────
+    let tareOffset = parseFloat(localStorage.getItem('tareOffset') || '0') || 0;
+    let showRaw = localStorage.getItem('showRaw') === 'true';
+
+    const tareInput = document.getElementById('tare-input');
+    const tareRaw = document.getElementById('tare-raw');
+    const tareHint = document.getElementById('tare-hint');
+
+    // Restore UI state
+    if (tareOffset !== 0) tareInput.value = tareOffset.toFixed(3);
+    tareRaw.checked = showRaw;
+
+    function applyWeight(raw) {
+      if (raw == null) return null;
+      return showRaw ? raw : raw - tareOffset;
+    }
+
+    function updateTareHint() {
+      if (showRaw) {
+        tareHint.textContent = 'Rohwert aktiv — Offset wird nicht abgezogen.';
+      } else if (tareOffset !== 0) {
+        tareHint.textContent = `Offset aktiv: −${tareOffset.toFixed(3)} kg`;
+      } else {
+        tareHint.textContent = '';
+      }
+      document.getElementById('weight-label').textContent =
+        showRaw || tareOffset === 0 ? 'Aktuelles Gewicht' : 'Nettogewicht';
+      document.getElementById('th-weight').textContent =
+        showRaw || tareOffset === 0 ? 'Gewicht (kg)' : 'Nettogewicht (kg)';
+    }
+
+    document.getElementById('tare-apply').addEventListener('click', () => {
+      const v = parseFloat(tareInput.value);
+      if (isNaN(v)) return;
+      tareOffset = v;
+      localStorage.setItem('tareOffset', v);
+      updateTareHint();
+      load();
+      loadChart();
+    });
+
+    tareRaw.addEventListener('change', () => {
+      showRaw = tareRaw.checked;
+      localStorage.setItem('showRaw', showRaw);
+      updateTareHint();
+      load();
+      loadChart();
+    });
+
+    updateTareHint();
+
+    // ── Chart ─────────────────────────────────────────────────────────────────
     function fmt(v, digits) {
       return v != null ? v.toFixed(digits) : '—';
+    }
+
+    const chartCtx = document.getElementById('weight-chart').getContext('2d');
+    const weightChart = new Chart(chartCtx, {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: 'Gewicht (kg)',
+          data: [],
+          borderColor: '#e63a60',
+          backgroundColor: 'rgba(230, 58, 96, 0.08)',
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          tension: 0.3,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: false,
+        scales: {
+          x: {
+            type: 'time',
+            time: { tooltipFormat: 'dd.MM.yyyy HH:mm', displayFormats: { hour: 'HH:mm', minute: 'HH:mm' } },
+            ticks: { color: '#7a6a62', maxTicksLimit: 8 },
+            grid: { color: '#2e2420' },
+          },
+          y: {
+            ticks: { color: '#7a6a62' },
+            grid: { color: '#2e2420' },
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => `${ctx.parsed.y.toFixed(3)} kg`
+            }
+          }
+        }
+      }
+    });
+
+    async function loadChart() {
+      const from = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const res = await fetch(`/api/measurements?from_ts=${encodeURIComponent(from)}&limit=5000`);
+      if (!res.ok) return;
+      const rows = await res.json();
+      weightChart.data.datasets[0].data = rows
+        .map(r => ({ x: new Date(r.ts), y: applyWeight(r.gewicht_kg) }))
+        .filter(p => p.y != null)
+        .reverse();
+      weightChart.update();
     }
 
     async function load() {
@@ -245,7 +525,8 @@
 
         if (rows.length > 0) {
           const latest = rows[0];
-          document.getElementById('current-weight').textContent = fmt(latest.gewicht_kg, 2);
+          const w = applyWeight(latest.gewicht_kg);
+          document.getElementById('current-weight').textContent = fmt(w, 2);
           document.getElementById('current-ts').textContent =
             new Date(latest.ts).toLocaleString('de-DE');
         }
@@ -253,7 +534,7 @@
         document.getElementById('table-body').innerHTML = rows.map(r => `
           <tr>
             <td>${new Date(r.ts).toLocaleString('de-DE')}</td>
-            <td class="weight-cell">${fmt(r.gewicht_kg, 3)}</td>
+            <td class="weight-cell">${fmt(applyWeight(r.gewicht_kg), 3)}</td>
             <td>${fmt(r.temp_ds18b20, 1)}</td>
             <td>${fmt(r.temp_bme280, 1)}</td>
             <td>${fmt(r.humidity_pct, 1)}</td>
@@ -270,7 +551,10 @@
     }
 
     load();
+    loadChart();
     setInterval(load, 10000);
+    setInterval(loadChart, 60000);
   </script>
 </body>
+
 </html>
