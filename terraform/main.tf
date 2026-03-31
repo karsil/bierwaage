@@ -23,7 +23,7 @@ resource "openstack_networking_secgroup_rule_v2" "ingress_grafana" {
   protocol          = "tcp"
   port_range_min    = 3000
   port_range_max    = 3000
-  remote_ip_prefix  = "0.0.0.0/0"
+  remote_ip_prefix  = "${var.internal_network_gateway}/32"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "ingress_frontend" {
