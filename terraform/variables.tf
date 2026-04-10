@@ -3,8 +3,8 @@ variable "external_network_id" {
   type        = string
 }
 
-variable "floating_ip_pool" {
-  description = "Name of the OpenStack floating IP pool"
+variable "floating_ip_address" {
+  description = "Address of the existing floating IP to associate with the server"
   type        = string
 }
 
